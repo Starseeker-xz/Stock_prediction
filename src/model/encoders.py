@@ -83,10 +83,10 @@ class TemporalBlock(nn.Module):
         self.init_weights()
 
     def init_weights(self):
-        self.conv1.weight.data.normal_(0, 0.01)
-        self.conv2.weight.data.normal_(0, 0.01)
+        nn.init.kaiming_normal_(self.conv1.weight, mode='fan_in', nonlinearity='relu')
+        nn.init.kaiming_normal_(self.conv2.weight, mode='fan_in', nonlinearity='relu')
         if self.downsample is not None:
-            self.downsample.weight.data.normal_(0, 0.01)
+            nn.init.kaiming_normal_(self.downsample.weight, mode='fan_in', nonlinearity='relu')
 
     def forward(self, x):
         out = self.net(x)

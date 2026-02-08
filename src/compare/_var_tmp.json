@@ -1,0 +1,60 @@
+{
+  "method": "var",
+  "description": "VAR baseline with rolling 1-step forecasts (fit on train only), lags=15.",
+  "timestamp": "2026-02-08 10:21:53",
+  "data_csv": "data/AAPL_processed.csv",
+  "split": {
+    "train_ratio": 0.7,
+    "val_ratio": 0.15
+  },
+  "config": {
+    "FEATURE_COLS": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume"
+    ],
+    "TARGET_COL": "Close",
+    "TARGET_NORMALIZE": true,
+    "FEATURE_NORMALIZE_MASK": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "SEQ_LEN_LONG": 260,
+    "SEQ_LEN_MEDIUM": 63,
+    "SEQ_LEN_SHORT": 21
+  },
+  "metrics": {
+    "train": {
+      "mse_raw": 0.006070358914563202,
+      "n": 7706
+    },
+    "val": {
+      "mse_raw": 0.2689971489950408,
+      "n": 1707
+    },
+    "test": {
+      "mse_raw": 9.062623845955443,
+      "n": 1707
+    }
+  },
+  "params": {
+    "var_cols": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume"
+    ],
+    "lags": 15,
+    "lags_selection": {
+      "maxlags": 15,
+      "ic": "aic"
+    },
+    "scaler": "StandardScaler(train_only)"
+  }
+}

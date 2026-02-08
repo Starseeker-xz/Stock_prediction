@@ -1,0 +1,64 @@
+{
+  "method": "arima",
+  "description": "ARIMA baseline with rolling 1-step forecasts (fit on train only), order=(5, 1, 0).",
+  "timestamp": "2026-02-08 16:26:03",
+  "data_csv": "data/AAPL_processed.csv",
+  "split": {
+    "train_ratio": 0.7,
+    "val_ratio": 0.15
+  },
+  "config": {
+    "FEATURE_COLS": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume",
+      "Close_logret",
+      "RSI_14",
+      "WeekOfYear_sin",
+      "WeekOfYear_cos",
+      "DayOfWeek_sin",
+      "DayOfWeek_cos"
+    ],
+    "TARGET_COL": "Close",
+    "TARGET_NORMALIZE": true,
+    "FEATURE_NORMALIZE_MASK": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false
+    ],
+    "SEQ_LEN_LONG": 260,
+    "SEQ_LEN_MEDIUM": 63,
+    "SEQ_LEN_SHORT": 21
+  },
+  "metrics": {
+    "train": {
+      "mse_raw": 0.006586298285238888,
+      "n": 7697
+    },
+    "val": {
+      "mse_raw": 0.25463947555632405,
+      "n": 1704
+    },
+    "test": {
+      "mse_raw": 8.419637386985322,
+      "n": 1705
+    }
+  },
+  "params": {
+    "order": [
+      5,
+      1,
+      0
+    ]
+  }
+}

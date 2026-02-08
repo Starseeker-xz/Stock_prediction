@@ -1,0 +1,57 @@
+
+class ModelConfig:
+    DATA_CSV = 'data/AAPL_processed.csv'
+
+    # FEATURE_COLS = ['Open', 'High', 'Low', 'Close','Open_logret', 'High_logret', 'Low_logret', 'Close_logret', 'Volume']
+    # FEATURE_COLS = ['Close', 'Volume']
+    FEATURE_COLS = ['Open', 'High', 'Low', 'Close', 'Volume']
+    
+    # TARGET_COL = 'Close_logret'
+    TARGET_COL = 'Close'
+
+    INPUT_SIZE = len(FEATURE_COLS)
+    OUTPUT_SIZE = 1 
+
+    # 是否归一化
+    FEATURE_NORMALIZE_MASK = [True, True, True, True, True]
+    # FEATURE_NORMALIZE_MASK = [True, True]
+    TARGET_NORMALIZE = True
+    
+    # 长时序列配置：窗口聚合模式
+    LONG_WINDOW_SIZE = 5 # 一个窗口聚合多少天
+    LONG_NUM_WINDOWS = 52 # 输入多少个窗口
+    SEQ_LEN_LONG = LONG_WINDOW_SIZE * LONG_NUM_WINDOWS # 总回看长度
+    
+    SEQ_LEN_MEDIUM = 42  # 2个月
+    SEQ_LEN_SHORT = 21    # 2周
+    
+    # 模型维度
+    # 以 short 为骨干的测试模式：
+    # 'short_only'（仅短时）, 'short_medium'（短+中）, 'short_long'（短+长）, 'full'（短+中+长）
+    MODEL_MODE = 'short_only'
+
+    # 融合方式：
+    # - 'concat'：原始做法，直接拼接 short/medium/long 的最后时刻特征
+    # - 'gated_short_mlp'：用 short 的特征经小 MLP 产生门控权重，决定吸收多少 medium/long 到 short
+    FUSION_METHOD = 'gated_short_mlp'
+
+    # gated_short_mlp 参数
+    GATE_HIDDEN_SIZE = 32
+    GATE_INIT_BIAS = -2.0  # 越小越倾向于初始不吸收（sigmoid 后接近 0）
+    GATE_DETACH_AUX = False
+    
+    HIDDEN_SIZE_LONG = 64    # BiLSTM hidden size
+    HIDDEN_SIZE_MEDIUM = 64 # LSTM hidden size
+    TCN_CHANNELS = [32, 64] # TCN layers
+    
+    # Cross Attention 维度
+    D_MODEL = 32
+    NUM_HEADS = 4
+    
+    # 训练相关
+    PATIENCE = 40
+    DROPOUT = 0.0
+    LEARNING_RATE = 1e-4
+    WEIGHT_DECAY = 0.0
+    BATCH_SIZE = 32
+    EPOCHS = 1000

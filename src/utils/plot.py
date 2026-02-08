@@ -3,7 +3,15 @@ import torch
 import numpy as np
 import os
 
-def plot_predictions(model, loader, device, save_dir, scaler=None, filename='prediction_analysis.png'):
+def plot_predictions(
+    model,
+    loader,
+    device,
+    save_dir,
+    scaler=None,
+    filename='prediction_analysis.png',
+    predict_residual: bool = False,
+):
     """
     绘制预测值与真实值的对比图
     """
@@ -12,22 +20,33 @@ def plot_predictions(model, loader, device, save_dir, scaler=None, filename='pre
     all_targets = []
     
     with torch.no_grad():
-        for x_long, x_medium, x_short, y in loader:
-            x_long = x_long.to(device)
-            x_medium = x_medium.to(device)
-            x_short = x_short.to(device)
+        for x_long, x_medium, x_short, y, prev_y in loader:
+            # Data is already on device if using GPUDataset, but .to(device) is idempotent (safe)
+            if not x_long.is_cuda and device.type == 'cuda':
+                x_long = x_long.to(device)
+                x_medium = x_medium.to(device)
+                x_short = x_short.to(device)
             
             output = model(x_long, x_medium, x_short)
+            if predict_residual:
+                output = output + prev_y
             
             all_preds.append(output.cpu().numpy())
-            all_targets.append(y.numpy())
+            all_targets.append(y.cpu().numpy())
             
     preds = np.concatenate(all_preds).flatten()
     targets = np.concatenate(all_targets).flatten()
     
-    preds = scaler.inverse_transform(preds.reshape(-1, 1)).flatten()
-    targets = scaler.inverse_transform(targets.reshape(-1, 1)).flatten()
-    
+    # Check if scaler is fitted before inverse transform
+    if scaler is not None:
+        try:
+            # Simple check if scaler is fitted (sklearn scalers have mean_ attribute after fit)
+            if hasattr(scaler, 'mean_') or hasattr(scaler, 'min_'):
+                preds = scaler.inverse_transform(preds.reshape(-1, 1)).flatten()
+                targets = scaler.inverse_transform(targets.reshape(-1, 1)).flatten()
+        except Exception as e:
+            print(f"Warning: inverse_transform failed, using raw values. Error: {e}")
+
     plt.figure(figsize=(15, 7))
     plt.plot(targets, label='Actual', alpha=0.7, color='blue')
     plt.plot(preds, label='Predicted', alpha=0.7, color='red', linestyle='--')
