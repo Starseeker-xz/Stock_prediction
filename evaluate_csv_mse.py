@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 
-# 修改这里为你的 CSV 路径（要求前两列分别是 y_true, y_pred）
 CSV_PATH = r"checkpoints\\<timestamp>\\pred_test.csv"
 
 

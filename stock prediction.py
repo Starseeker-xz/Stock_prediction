@@ -5,7 +5,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
@@ -34,8 +33,6 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # =======================
 # Model
 # =======================
-
-
 class ShortTermCNN(nn.Module):
     def __init__(self, in_channels, hidden_dim):
         super().__init__()
@@ -195,42 +192,6 @@ def eval_epoch(model, loader, criterion):
     return loss_sum / len(loader)
 
 
-def visualize_predictions(preds, gts, title_prefix="Test", max_points=1200):
-    preds = np.asarray(preds).reshape(-1)
-    gts = np.asarray(gts).reshape(-1)
-
-    if preds.shape[0] != gts.shape[0]:
-        raise ValueError(f"preds/gts length mismatch: {preds.shape[0]} vs {gts.shape[0]}")
-
-    n = preds.shape[0]
-    if n > max_points:
-        idx = np.linspace(0, n - 1, max_points, dtype=int)
-        preds_plot = preds[idx]
-        gts_plot = gts[idx]
-    else:
-        preds_plot = preds
-        gts_plot = gts
-
-    mae = float(np.mean(np.abs(preds - gts)))
-    rmse = float(np.sqrt(np.mean((preds - gts) ** 2)))
-
-    plt.figure(figsize=(14, 6))
-    plt.plot(gts_plot, label='Actual', alpha=0.75, color='tab:blue')
-    plt.plot(preds_plot, label='Predicted', alpha=0.75, color='tab:red', linestyle='--')
-    plt.title(f"{title_prefix} Predictions (MAE={mae:.4f}, RMSE={rmse:.4f})")
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-
-    plt.figure(figsize=(14, 4))
-    residuals = preds_plot - gts_plot
-    plt.plot(residuals, color='tab:green', alpha=0.7)
-    plt.axhline(y=0.0, color='black', linewidth=1)
-    plt.title(f"{title_prefix} Residuals (Pred - Actual)")
-    plt.grid(True, alpha=0.3)
-
-    plt.show()
-
-
 # =======================
 # Main
 # =======================
@@ -293,10 +254,9 @@ def main():
     preds = np.concatenate(preds)
     gts   = np.concatenate(gts)
 
+    print("Test MSE :", mean_squared_error(gts, preds))
     print("Test RMSE:", np.sqrt(mean_squared_error(gts, preds)))
     print("Test MAE :", mean_absolute_error(gts, preds))
-
-    visualize_predictions(preds, gts, title_prefix="Test")
 
 
 if __name__ == '__main__':

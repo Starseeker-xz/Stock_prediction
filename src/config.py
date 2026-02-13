@@ -4,7 +4,7 @@ class ModelConfig:
 
     # FEATURE_COLS = ['Open', 'High', 'Low', 'Close','Open_logret', 'High_logret', 'Low_logret', 'Close_logret', 'Volume']
     # FEATURE_COLS = ['Close', 'Volume']
-    BASE_FEATURE_COLS = ['Open', 'High', 'Low', 'Close', 'Volume', 'Close_logret', 'RSI_14']
+    BASE_FEATURE_COLS = ['Open', 'High', 'Low', 'Close', 'Volume', 'RSI_14']
 
     # 时间特征
     TIME_FEATURES_LONG = ['WeekOfYear_sin', 'WeekOfYear_cos']
@@ -21,7 +21,7 @@ class ModelConfig:
     # TARGET_COL = 'Close_logret'
     TARGET_COL = 'Close'
     # 预测残差：输出 = y[t] + f(x<=t)
-    PREDICT_RESIDUAL = True
+    PREDICT_RESIDUAL = False
 
     INPUT_SIZE_LONG = len(FEATURE_COLS_LONG)
     INPUT_SIZE_SHORT_MEDIUM = len(FEATURE_COLS_SHORT_MEDIUM)
@@ -29,7 +29,7 @@ class ModelConfig:
 
     # 是否归一化
     # 时间特征默认不归一化（已在 [-1, 1]）
-    FEATURE_NORMALIZE_MASK_SHORT_MEDIUM = [True, True, True, True, True, False, True]
+    FEATURE_NORMALIZE_MASK_SHORT_MEDIUM = [True, True, True, True, True, True]
     # + [False] * len(TIME_FEATURES_SHORT_MEDIUM)
     # FEATURE_NORMALIZE_MASK_SHORT_MEDIUM = [True, True, True, True, True]
     # FEATURE_NORMALIZE_MASK_LONG = [True, True, True, True, True]
@@ -68,7 +68,7 @@ class ModelConfig:
     # 训练相关
     PATIENCE = 40
     DROPOUT = 0.0
-    LEARNING_RATE = 1e-4
+    LEARNING_RATE = 2e-4
     WEIGHT_DECAY = 0.0
     BATCH_SIZE = 32
     EPOCHS = 1000
