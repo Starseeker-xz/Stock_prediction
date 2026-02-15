@@ -11,7 +11,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 # =======================
 # Config
 # =======================
-CSV_PATH = 'data/GOOGL_processed.csv'
+CSV_PATH = 'data\GOOGL_processed.csv'
 
 FEATURES = ['Open', 'High', 'Low', 'Close', 'Volume']
 TARGET   = 'Close'
@@ -254,7 +254,6 @@ def main():
     preds = np.concatenate(preds)
     gts   = np.concatenate(gts)
 
-    print("Test MSE :", mean_squared_error(gts, preds))
     print("Test RMSE:", np.sqrt(mean_squared_error(gts, preds)))
     print("Test MAE :", mean_absolute_error(gts, preds))
 

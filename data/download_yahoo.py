@@ -127,7 +127,7 @@ def main():
     parser.add_argument(
         'ticker',
         nargs='?',
-        default='AAPL',
+        default='GOOGL',
         help='股票代码，例如: GOOGL；A股常见后缀如 600519.SS / 000001.SZ',
     )
     parser.add_argument(

@@ -8,6 +8,7 @@ import json
 import datetime
 import numpy as np
 import pandas as pd
+import random
 
 from src.config import ModelConfig
 from src.model.hierarchical_model import HierarchicalStockModel
@@ -58,14 +59,39 @@ def _save_pred_csv(csv_path: str, y_true_raw: np.ndarray, y_pred_raw: np.ndarray
     })
     df.to_csv(csv_path, index=False, encoding="utf-8")
 
-def train():
+
+def _set_seed(seed: int) -> None:
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+def train(save_dir: str = None):
+    """Train the model.
+
+    Args:
+        save_dir: Custom directory to save experiment outputs.
+                  If None, auto-generates a timestamped folder under checkpoints/.
+
+    Returns:
+        dict with keys: 'exp_dir', 'best_val_loss', 'mse_raw' (train/val/test),
+              'train_losses', 'val_losses'.
+    """
     config = ModelConfig
+    seed = int(getattr(config, "SEED", 42))
+    _set_seed(seed)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
     
     # 创建实验记录文件夹
-    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-    exp_dir = os.path.join('checkpoints', timestamp)
+    if save_dir is not None:
+        exp_dir = save_dir
+    else:
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+        exp_dir = os.path.join('checkpoints', timestamp)
     os.makedirs(exp_dir, exist_ok=True)
     print(f"Experiment outputs will be saved to: {exp_dir}")
     
@@ -106,7 +132,13 @@ def train():
     
     # Early Stopping 计数器
     patience = getattr(config, 'PATIENCE', 20)
+    use_early_stopping = patience is not None and int(patience) > 0
     counter = 0
+
+    if use_early_stopping:
+        print(f"Early stopping enabled (patience={patience})")
+    else:
+        print("Early stopping disabled (PATIENCE <= 0), training will run for full EPOCHS.")
     
     predict_residual = bool(getattr(config, "PREDICT_RESIDUAL", False))
 
@@ -159,10 +191,11 @@ def train():
             print(f"Saved best model with val_loss: {best_val_loss:.6f}")
             counter = 0 # reset counter
         else:
-            counter += 1
-            print(f"EarlyStopping counter: {counter} out of {patience}")
+            if use_early_stopping:
+                counter += 1
+                print(f"EarlyStopping counter: {counter} out of {patience}")
             
-        if counter >= patience:
+        if use_early_stopping and counter >= patience:
             print("Early Stopping triggered.")
             break
 
@@ -242,6 +275,18 @@ def train():
         filename='test_predictions.png',
         predict_residual=predict_residual,
     )
+
+    return {
+        'exp_dir': exp_dir,
+        'best_val_loss': best_val_loss,
+        'mse_raw': {
+            'train': train_mse_raw,
+            'val': val_mse_raw,
+            'test': test_mse_raw,
+        },
+        'train_losses': train_losses,
+        'val_losses': val_losses,
+    }
 
 if __name__ == "__main__":
     train()

@@ -1,8 +1,8 @@
 {
   "method": "naive_prev_day",
   "description": "Predict y[t+1] with y[t] (previous day target).",
-  "timestamp": "2026-02-08 17:59:55",
-  "data_csv": "data/AAPL_processed.csv",
+  "timestamp": "2026-02-15 13:02:48",
+  "data_csv": "data/GOOGL_processed.csv",
   "split": {
     "train_ratio": 0.7,
     "val_ratio": 0.15
@@ -13,9 +13,7 @@
       "High",
       "Low",
       "Close",
-      "Volume",
-      "Close_logret",
-      "RSI_14"
+      "Volume"
     ],
     "TARGET_COL": "Close",
     "TARGET_NORMALIZE": true,
@@ -24,26 +22,24 @@
       true,
       true,
       true,
-      true,
-      false,
       true
     ],
-    "SEQ_LEN_LONG": 140,
-    "SEQ_LEN_MEDIUM": 42,
-    "SEQ_LEN_SHORT": 10
+    "SEQ_LEN_LONG": 21,
+    "SEQ_LEN_MEDIUM": 10,
+    "SEQ_LEN_SHORT": 5
   },
   "metrics": {
     "train": {
-      "mse_raw": 0.006510910431138649,
-      "n": 7817
+      "mse_raw": 0.20341187338122835,
+      "n": 3764
     },
     "val": {
-      "mse_raw": 0.2543123292145348,
-      "n": 1704
+      "mse_raw": 4.156294427200512,
+      "n": 811
     },
     "test": {
-      "mse_raw": 8.41142652407388,
-      "n": 1705
+      "mse_raw": 10.54284312554683,
+      "n": 811
     }
   }
 }

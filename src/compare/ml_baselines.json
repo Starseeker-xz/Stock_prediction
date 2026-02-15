@@ -1,0 +1,62 @@
+{
+  "cnn_1d": {
+    "method": "cnn_1d",
+    "description": "1D‑CNN (channels=[32, 64, 64], kernel=3, window=5)",
+    "timestamp": "2026-02-15 18:02:03",
+    "data_csv": "data/AAPL_processed.csv",
+    "split": {
+      "train_ratio": 0.7,
+      "val_ratio": 0.15
+    },
+    "config": {
+      "FEATURE_COLS": [
+        "Open",
+        "High",
+        "Low",
+        "Close",
+        "Volume"
+      ],
+      "TARGET_COL": "Close",
+      "TARGET_NORMALIZE": true,
+      "FEATURE_NORMALIZE_MASK": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "SEQ_LEN_LONG": 65,
+      "SEQ_LEN_MEDIUM": 10,
+      "SEQ_LEN_SHORT": 5
+    },
+    "metrics": {
+      "train": {
+        "mse_raw": 0.00974023702233453,
+        "n": 7952
+      },
+      "val": {
+        "mse_raw": 0.38379747656148283,
+        "n": 1704
+      },
+      "test": {
+        "mse_raw": 13.697916087563533,
+        "n": 1705
+      }
+    },
+    "params": {
+      "window_size": 5,
+      "channels": [
+        32,
+        64,
+        64
+      ],
+      "kernel_size": 3,
+      "dropout": 0.0,
+      "lr": 0.0001,
+      "epochs": 200,
+      "batch_size": 32,
+      "patience": 40,
+      "seed": 56
+    }
+  }
+}
